@@ -7,15 +7,18 @@ You need a Roll20 Pro Subscription to be able to use API Scripts.
 You will need to install two scripts :
 * apicmd.js that you can find [apicmd GitHub](https://gist.github.com/goblinHordes/7424738)
 * this Bennies.js script from [Gronyon's GitHub](https://github.com/gronyon/BenniesScript)
+
 apicmd is used to parse the BenniesScript input (why reinvent the wheel when it has already been created and nicely round ?).
 
 You will also need to create a Deck of "cards" for your bennies, in your Roll20 game.
 * Name of the deck : it will appear in your players hand of cards and will also be used in this script API commands. Something like "Bennies" should do.
 * Set the Deck to unlimited.
+
 ![Benny deck setup](benny-deck.png)
 
 * Create one card, give it a name. This name can be used in the API (see below).
 * Uploade a visual for your card and the deck background. I personnaly use the same image.
+
 ![Benny card setup](benny-card.png)
 
 
@@ -89,7 +92,21 @@ If player has Luck or similary Edge, you can set the quantity :
 
 ## Setting up macros
 
+You can of course create macro so you don't have to type the commands each time :
 
+![Reset macro](simple-macro.png)
+
+You can add this macro to your macro bar. However macro bar becomes quickly overburdained.
+
+Create a fake character, e.g. named "Benny Dealer" and have her Abilities to store the macros. 
+
+![Macro Character](benny-dealer-character.png)
+
+Have each ability display in the Token Action bar.
+
+Put a token of this character somewhere hidden on your game table, and you can roll your macros from the token bar.
+
+![Token Bar](benny-dealer-in-game.png)
 
 
 ## Handling different type of bennies
