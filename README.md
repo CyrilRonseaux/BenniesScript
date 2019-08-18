@@ -5,17 +5,18 @@ Roll20 script to ease dealing Savage Worlds Bennies to players.
 You need a Roll20 Pro Subscription to be able to use API Scripts.
 
 You will need to install two scripts :
-* apicmd.js that you can find ![apicmd GitHub](https://gist.github.com/goblinHordes/7424738)
-* this Bennies.js script from ![Gronyon's GitHub](https://github.com/gronyon/BenniesScript)
+* apicmd.js that you can find [apicmd GitHub](https://gist.github.com/goblinHordes/7424738)
+* this Bennies.js script from [Gronyon's GitHub](https://github.com/gronyon/BenniesScript)
 apicmd is used to parse the BenniesScript input (why reinvent the wheel when it has already been created and nicely round ?).
 
 You will also need to create a Deck of "cards" for your bennies, in your Roll20 game.
 * Name of the deck : it will appear in your players hand of cards and will also be used in this script API commands. Something like "Bennies" should do.
 * Set the Deck to unlimited.
-* ![Benny deck setup](benny-deck.png)
+![Benny deck setup](benny-deck.png)
+
 * Create one card, give it a name. This name can be used in the API (see below).
 * Uploade a visual for your card and the deck background. I personnaly use the same image.
-* ![Benny card setup](benny-card.png)
+![Benny card setup](benny-card.png)
 
 
 ## API Commands
@@ -24,7 +25,9 @@ This will give a single benny to the given player :
 ```javascript
 !bennies-deal --player PlayerDisplayName --deck NameOfTheBennyDeck
 ```
+
 ![Dealt one benny](deal-1.png)
+
 ![One benny in hand](gronyon-hand-1.png)
 
 If player display name contain spaces or special characters, use quotes (same for your bennies deck name if needed) :
@@ -36,7 +39,9 @@ If you ever need to give more than one benny to a player :
 ```javascript
 !bennies-deal --player PlayerDisplayName --deck NameOfTheBennyDeck --quantity 4
 ```
+
 ![Dealt four bennies](deal-4.png)
+
 ![Four bennies in hand](gronyon-hand-4.png)
 
 
@@ -49,16 +54,20 @@ If you don't provide a player name, the commande will list all players and let y
 ```javascript
 !bennies-deal -d NameOfTheBennyDeck
 ```
+
 ![Player name omitted will list all players](omit-player-name.png)
 
 ### Using bennies (players)
 No need to use script api here. Players will simply drag and drop their benny card on the table.
+
 ![Drag and drop a benny](drag-and-drop.png)
 
 If that was a mistake, they can simply pick it back.
+
 ![Pick the benny back](oops.png)
 
 If it wasn't, Game Master can simply delete the benny from the table.
+
 ![Delete benny from table](pick-it.png)
 
 
@@ -75,6 +84,7 @@ If player has Luck or similary Edge, you can set the quantity :
 ```javascript
 !bennies-reset -p PlayerDisplayName -d NameOfTheBennyDeck -q 4
 ```
+
 ![Reseting bennies](benny-reset-4.png)
 
 ## Setting up macros
@@ -89,9 +99,11 @@ If your game is using different types of bennies (like in Deadlands), for exampl
 ```
 
 Those bennies will appear in separate sections (one per Deck) in the player's hand :
+
 ![One deck per type of bennies](multi-bennies-as-multi-deck.png)
 
 Or you can put all bennies as different cards in the same unique deck. Each card must have a different name.
+
 ![All bennies in same deck](multi-benny.png)
 
 You can then deal a specific benny to a player by adding a --card argument :
@@ -100,6 +112,7 @@ You can then deal a specific benny to a player by adding a --card argument :
 ```
 
 Bennies will all appear in the same section :
+
 ![Single benny section](single-benny-section.png)
 
 To reset bennies, you will have to specify each type of benny for each player :
