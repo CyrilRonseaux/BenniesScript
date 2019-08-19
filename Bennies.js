@@ -193,8 +193,8 @@ var BenniesScript = (function()
 	function _getOnlinePlayers()
 	{
 		var players = findObjs({
-			_type: "player" // ,
-			// _online: true
+			_type: "player",
+			_online: true
 		});
 		
 		return players;
