@@ -34,12 +34,12 @@ var BenniesScript = (function()
 	
 	function handleDealBennies(argv, msg) 
 	{
-		if (!argv || !argv.opts || !argv.opts.deck) { //  || !argv.opts.player
-			sendChat("api", "/w gm --deck and --player options are mandatory.");
+		if (!argv || !argv.opts || !argv.opts.deck) {
+			sendChat("api", "/w gm --deck option is mandatory.");
 			return;
 		}
 		
-		// if player was not provided, present one button per player and let GM.
+		// if player was not provided, present one button per player and let GM pick.
 		if (!argv.opts.player) {
 			var online = _getOnlinePlayers();
 			var buttons = "/w gm To whom do you want to deal bennies to ? <br/>";
