@@ -17,7 +17,7 @@ You will also need to create a Deck of "cards" for your bennies, in your Roll20 
 ![Benny deck setup](doc-assets/benny-deck.png)
 
 * Create one card, give it a name. This name can be used in the API (see below).
-* Uploade a visual for your card and the deck background. I personnaly use the same image.
+* Upload a visual for your card and the deck background. I personnaly use the same image.
 
 ![Benny card setup](doc-assets/benny-card.png)
 
@@ -53,7 +53,7 @@ And you can short it all :
 !bennies-deal -p PlayerDisplayName -d NameOfTheBennyDeck -q 2
 ```
 
-If you don't provide a player name, the commande will list all players and let you pick one :
+If you don't provide a player name, the command will list all online players and let you pick one :
 ```javascript
 !bennies-deal -d NameOfTheBennyDeck
 ```
@@ -83,7 +83,7 @@ You can use the reset command, which syntax looks exactly as the deal command, b
 ```
 Bennies will be reset to 3.
 
-If player has Luck or similary Edge, you can set the quantity :
+If player has Luck or similar Edge, you can set the quantity :
 ```javascript
 !bennies-reset -p PlayerDisplayName -d NameOfTheBennyDeck -q 4
 ```
@@ -96,9 +96,20 @@ You can of course create macro so you don't have to type the commands each time 
 
 ![Reset macro](doc-assets/simple-macro.png)
 
+Note : sometimes when you put more than one command in a single macro, it might stop to the first line and ignore the rest. When you insert an empty line on top, I find it does always execute all lines.
+
 You can add this macro to your macro bar. However macro bar becomes quickly overburdained.
 
-Create a fake character, e.g. named "Benny Dealer" and have her Abilities to store the macros. 
+You can use UTF-8 characters that look like icons for macro names. You can find such icons on sites like [utf8icons](https://www.utf8icons.com/subsets/miscellaneous-symbols-and-pictographs/100) or [emojipedia](https://emojipedia.org/). For example, here I used a "cookie" for the macro name (the macro will ask me to pick a player, and will deal her 1 benny) :
+
+![Macro with Cookie name](doc-assets/macro-with-utf8-icons.png)
+
+This will nicely display in your macro bar :
+
+![Cookie macro displayed in macro bar](doc-assets/icons-in-macro-bar.png)
+
+### Using a Macro Character Sheet
+To save macro bar space, and for macro you don't need that often, you can create a fake character, e.g. named "Benny Dealer" and have her Abilities to store the macros. 
 
 ![Macro Character](doc-assets/benny-dealer-character.png)
 
