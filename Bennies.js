@@ -41,21 +41,7 @@ var BenniesScript = (function()
 		
 		// if player was not provided, present one button per player and let GM pick.
 		if (!argv.opts.player) {
-			var online = _getOnlinePlayers();
-			var buttons = "/w gm To whom do you want to deal bennies to ? <br/>";
-			online.forEach(function(p) {
-				var cardArg = "";
-				if (argv.opts.card) {
-					cardArg = " --card &quot;" + argv.opts.card + "&quot;";
-				}
-				var quantityArg = "";
-				if (argv.opts.quantity) {
-					quantityArg = " --quantity " + argv.opts.quantity;
-				}
-				buttons = buttons + "[" + p.get("displayname") + "](!bennies-deal --player &quot;" + p.get("displayname") + "&quot; --deck &quot;" + argv.opts.deck + "&quot;" + cardArg + quantityArg + ") ";
-			});
-			
-			sendChat("api", buttons);
+			_displayPlayersToDealTo(argv.opts.deck, argv.opts.card, argv.opts.quantity);
 			return;
 		}
 		
@@ -64,32 +50,24 @@ var BenniesScript = (function()
 			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
 			return;
 		}
-		
-		var playerHand = _getPlayerHand(player.get("id"));
-		if (!playerHand) {
-			sendChat("api", "/w gm Player hand does not exist " + player.get("name") + " (See API forums, this should never happen).");
-			return;
-		}	
+		var playerId = player.get("id");
 		
 		var benniesDeck = _getDeckByName(argv.opts.deck);
 		if (!benniesDeck) {
 			sendChat("api", "/w gm Deck not found " + argv.opts.deck);
 			return;
 		}
+		var benniesDeckId = benniesDeck.get("id");
 		
 		var bennyCard = null;
+		var bennyCardId = null;
 		if (argv.opts.card) {
 			bennyCard = _getCardInDeck(argv.opts.card, benniesDeck.get('id'));
 			if (!bennyCard) {
 				sendChat("api", "/w gm Card " + argv.opts.card + " not found in deck " + argv.opts.deck);
 				return;
 			}
-		} else {
-			bennyCard = _getFirstCardOfDeck(benniesDeck.get('id'));
-			if (!bennyCard) {
-				sendChat("api", "/w gm No card in deck " + argv.opts.deck);
-				return;
-			}
+			bennyCardId = bennyCard.get("id");
 		}
 		
 		var quantity = 1;
@@ -107,14 +85,52 @@ var BenniesScript = (function()
 			quantity = q;
 		}
 		
-		var bennyCardId = bennyCard.get("_id");
-		var handAsArray = playerHand.get("currentHand").split(",");
 		var i;
-		for (i = 0; i < quantity; i++) { 
-			handAsArray.push(bennyCardId);
+		for (i = 0; i < quantity; i++) {
+			_dealBennyToPlayer(player, benniesDeckId, bennyCardId);
 		}
-		playerHand.set("currentHand", handAsArray.join(","));
-		_niceChat(bennyCard.get("avatar"), "Dealt " + quantity + " " + bennyCard.get("name") + " to **" + player.get("displayname") + "**.");
+	}
+	
+	function _dealBennyToPlayer(player, benniesDeckId, bennyCardId)
+	{
+        var card = null;
+        if (bennyCardId) {
+            giveCardToPlayer(bennyCardId, player.get("id"));
+            card = _getCardById(bennyCardId);
+        } else {
+            // draw from top, then deal it
+            let cardDrawnId = drawCard(benniesDeckId, bennyCardId);
+            if (!cardDrawnId) {
+                shuffleDeck(benniesDeckId);
+                cardDrawnId = drawCard(benniesDeckId, bennyCardId);
+            }
+            if (!cardDrawnId) {
+                sendChat("api", "/w gm The deck seems empty. Recall and shuffle ?");
+                return;
+            }
+            giveCardToPlayer(cardDrawnId, player.get("id"));
+            card = _getCardById(cardDrawnId);
+        }
+        _niceChat(card.get("avatar"), "Dealt a " + card.get("name") + " to **" + player.get("displayname") + "**.");						
+	}
+	
+	function _displayPlayersToDealTo(deckName, cardName, quantity = null)
+	{
+			var online = _getOnlinePlayers();
+			var buttons = "/w gm To whom do you want to deal bennies to ? <br/>";
+			online.forEach(function(p) {
+				var cardArg = "";
+				if (cardName) {
+					cardArg = " --card &quot;" + cardName + "&quot;";
+				}
+				var quantityArg = "";
+				if (quantity) {
+					quantityArg = " --quantity " + quantity;
+				}
+				buttons = buttons + "[" + p.get("displayname") + "](!bennies-deal --player &quot;" + p.get("displayname") + "&quot; --deck &quot;" + deckName + "&quot;" + cardArg + quantityArg + ") ";
+			});
+			
+			sendChat("api", buttons);
 	}
 	
 	function handleResetBennies(argv, msg) 
@@ -169,6 +185,8 @@ var BenniesScript = (function()
 		}
 		
 		var bennyCardId = bennyCard.get("_id");
+		
+		
 		var handAsArray = playerHand.get("currentHand").split(",");
 		
 		// First removing all cards (if any) we need to reset
@@ -240,6 +258,19 @@ var BenniesScript = (function()
 		return cards[0]; // let's assume if multiple cards with the same name, they are all the same
 	}
 
+	function _getCardById(cardId)
+	{
+		var cards = findObjs({
+			_type: "card",
+			id: cardId
+		});
+	
+		if (!cards) {
+			return null;
+		}
+		return cards[0]; // shall return only one card anyway
+	}
+	
 	function _getFirstCardOfDeck(deckId) 
 	{
 		var cards = findObjs({
