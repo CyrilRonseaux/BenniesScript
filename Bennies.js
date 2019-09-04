@@ -69,18 +69,6 @@ var BenniesScript = (function()
 			}
 			bennyCardId = bennyCard.get("id");
 		}
-		log ("benny card id " + bennyCardId + " from deck " + benniesDeckId);
-		
-		log ("card info");
-		try {
-			var cardsInTheDeck = cardInfo( { type: "deck", deckid: benniesDeckId, discard: true} );
-			cardsInTheDeck.forEach(function (ci) {
-				log("type " + ci.type + ", id " + ci.id + ", cardid " + ci.cardid + ", index " + ci.index);
-			});
-			log ("empty ???");
-		} catch (e) {
-			log("error " + e);
-		}
 		
 		var quantity = 1;
 		// if quantity not provided or invalid, assume dealing a single benny
@@ -105,16 +93,25 @@ var BenniesScript = (function()
 	
 	function _dealBennyToPlayer(player, benniesDeckId, bennyCardId)
 	{
-		var cardDrawnId = drawCard(benniesDeckId, bennyCardId);
-		if (!cardDrawnId) {
-			log("shuffle");
-			shuffleDeck(benniesDeckId);
-			cardDrawnId = drawCard(benniesDeckId, bennyCardId);
-		}
-		giveCardToPlayer(cardDrawnId, player.get("id"));
-
-		var card = _getCardById(cardDrawnId);
-		_niceChat(card.get("avatar"), "Dealt a " + card.get("name") + " to **" + player.get("displayname") + "**.");						
+        var card = null;
+        if (bennyCardId) {
+            giveCardToPlayer(bennyCardId, player.get("id"));
+            card = _getCardById(bennyCardId);
+        } else {
+            // draw from top, then deal it
+            let cardDrawnId = drawCard(benniesDeckId, bennyCardId);
+            if (!cardDrawnId) {
+                shuffleDeck(benniesDeckId);
+                cardDrawnId = drawCard(benniesDeckId, bennyCardId);
+            }
+            if (!cardDrawnId) {
+                sendChat("api", "/w gm The deck seems empty. Recall and shuffle ?");
+                return;
+            }
+            giveCardToPlayer(cardDrawnId, player.get("id"));
+            card = _getCardById(cardDrawnId);
+        }
+        _niceChat(card.get("avatar"), "Dealt a " + card.get("name") + " to **" + player.get("displayname") + "**.");						
 	}
 	
 	function _displayPlayersToDealTo(deckName, cardName, quantity = null)
