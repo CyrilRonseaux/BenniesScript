@@ -14,12 +14,12 @@ You will also need to create a Deck of "cards" for your bennies, in your Roll20 
 * Name of the deck : it will appear in your players hand of cards and will also be used in this script API commands. Something like "Bennies" should do.
 * Set the Deck to unlimited.
 
-![Benny deck setup](doc-assets/benny-deck.png)
+![Benny deck setup](benny-deck.png)
 
 * Create one card, give it a name. This name can be used in the API (see below).
 * Uploade a visual for your card and the deck background. I personnaly use the same image.
 
-![Benny card setup](doc-assets/benny-card.png)
+![Benny card setup](benny-card.png)
 
 
 ## API Commands
