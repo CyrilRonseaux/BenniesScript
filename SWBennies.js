@@ -150,7 +150,7 @@ var BenniesScript = (function()
 
 		var playerHand = _getPlayerHand(player.get("id"));
 		if (!playerHand) {
-			sendChat("api", "/w gm Player hand does not exist " + player.get("name") + " (See API forums, this should never happen).");
+			sendChat("api", "/w gm Player " + player.get("name") + " seems to be offline.");
 			return;
 		}
 
