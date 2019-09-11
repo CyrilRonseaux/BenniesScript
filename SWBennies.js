@@ -150,7 +150,7 @@ var BenniesScript = (function()
 
 		var playerHand = _getPlayerHand(player.get("id"));
 		if (!playerHand) {
-			sendChat("api", "/w gm Player " + player.get("name") + " seems to be offline.");
+			sendChat("api", "/w gm Player " + argv.opts.player + " seems to be offline.");
 			return;
 		}
 
