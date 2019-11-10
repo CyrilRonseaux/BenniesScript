@@ -60,6 +60,17 @@ If you don't provide a player name, the command will list all online players and
 
 ![Player name omitted will list all players](doc-assets/omit-player-name.png)
 
+### Dealing bennies to every player
+Sometimes you want to reward each player with a benny, for example when a Joker was drawn. Use "all" for the player name.
+```javascript
+!bennies-deal --player all --deck NameOfTheBennyDeck
+```
+
+You could also grant multiple bennies to each player:
+```javascript
+!bennies-deal -p all -deck NameOfTheBennyDeck -q 3
+```
+
 ### Using bennies (players)
 No need to use script api here. Players will simply drag and drop their benny card on the table.
 
@@ -109,7 +120,7 @@ This will nicely display in your macro bar :
 ![Cookie macro displayed in macro bar](doc-assets/icons-in-macro-bar.png)
 
 ### Using a Macro Character Sheet
-To save macro bar space, and for macro you don't need that often, you can create a fake character, e.g. named "Benny Dealer" and have her Abilities to store the macros. 
+To save macro bar space, and for macro you don't need that often, you can create a fake character, e.g. named "Benny Dealer" and have her Abilities to store the macros.
 
 ![Macro Character](doc-assets/benny-dealer-character.png)
 
@@ -123,7 +134,7 @@ Put a token of this character somewhere hidden on your game table, and you can r
 ## Handling different type of bennies
 If your game is using different types of bennies (like in Deadlands), for example, a Classic benny that can reroll a trait, a Soak benny that can only soak wounds, and a royal benny that can be used for both, you can use a different deck for each type of benny, and change the Deck name in the command.
 ```javascript
-!bennies-deal -p PlayerDisplayName -d Royal 
+!bennies-deal -p PlayerDisplayName -d Royal
 ```
 
 Those bennies will appear in separate sections (one per Deck) in the player's hand :
@@ -149,4 +160,3 @@ To reset bennies, you will have to specify each type of benny for each player :
 !bennies-reset -p Dude -d Bennies --card Soak --quantity 1
 !bennies-reset -p Dude -d Bennies --card Royal --quantity 0
 ```
-

@@ -3,6 +3,12 @@ var BenniesScript = (function()
 {
 	'use strict';
 
+// ADD a -k --character option that accept character_id
+// ADD a -i --playerid option that accept a player_id instead of name ?
+// search if possible to fetch "part of" player name instead of equals
+// accept "all" for player name to give to each player.
+
+
 	function registerEventHandlers()
 	{
 		apicmd.on(
@@ -12,7 +18,7 @@ var BenniesScript = (function()
 			[
 				['-d', '--deck TEXT', 'Name of the deck where bennies to deal are stored.'],
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
-				['-p', '--player TEXT', 'Name of the player to deal bennies to.'],
+				['-p', '--player TEXT', 'Name of the player to deal bennies to. "all" to give same amount of bennies to each online player.'],
 				['-q', '--quantity TEXT', 'Number of bennies to deal to. Must be 1 or higher. Defaults to 1.']
 			],
 			handleDealBennies
@@ -44,13 +50,6 @@ var BenniesScript = (function()
 			_displayPlayersToDealTo(argv.opts.deck, argv.opts.card, argv.opts.quantity);
 			return;
 		}
-
-		var player = _getPlayerByName(argv.opts.player);
-		if (!player) {
-			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
-			return;
-		}
-		var playerId = player.get("id");
 
 		var benniesDeck = _getDeckByName(argv.opts.deck);
 		if (!benniesDeck) {
@@ -85,6 +84,33 @@ var BenniesScript = (function()
 			quantity = q;
 		}
 
+		if ("all" == argv.opts.player) {
+			_dealBenniesToAllPlayers(benniesDeckId, bennyCardId, quantity);
+			return;
+		}
+
+		var player = _getPlayerByName(argv.opts.player);
+		if (!player) {
+			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
+			return;
+		}
+		var playerId = player.get("id");
+
+		_dealBenniesToPlayer(player, benniesDeckId, bennyCardId, quantity);
+	}
+
+	function _dealBenniesToAllPlayers(benniesDeckId, bennyCardId, quantity)
+	{
+			var online = _getOnlinePlayers();
+			online.forEach(function(p) {
+				var i;
+				for (i = 0; i < quantity; i++) {
+					_dealBennyToPlayer(p, benniesDeckId, bennyCardId);
+				}
+			});
+	}
+
+	function _dealBenniesToPlayer(player, benniesDeckId, bennyCardId, quantity) {
 		var i;
 		for (i = 0; i < quantity; i++) {
 			_dealBennyToPlayer(player, benniesDeckId, bennyCardId);
