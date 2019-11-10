@@ -160,3 +160,11 @@ To reset bennies, you will have to specify each type of benny for each player :
 !bennies-reset -p Dude -d Bennies --card Soak --quantity 1
 !bennies-reset -p Dude -d Bennies --card Royal --quantity 0
 ```
+
+## Advanced usage
+### Using player IDs
+Instead of giving bennies to a player by giving her name, you can use her ID:
+```javascript
+!bennies-deal -p "-L8nrK8CDBqUbROE_YvW" -d NameOfTheBennyDeck
+```
+Note that you must use quotes around the id, to avoid the leading hyphen of Roll20 Id to be identified as an option to the command line.

@@ -18,7 +18,7 @@ var BenniesScript = (function()
 			[
 				['-d', '--deck TEXT', 'Name of the deck where bennies to deal are stored.'],
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
-				['-p', '--player TEXT', 'Name of the player to deal bennies to. "all" to give same amount of bennies to each online player.'],
+				['-p', '--player TEXT', 'Name or Id (use quotes arount id) of the player to deal bennies to. "all" to give same amount of bennies to each online player.'],
 				['-q', '--quantity TEXT', 'Number of bennies to deal to. Must be 1 or higher. Defaults to 1.']
 			],
 			handleDealBennies
@@ -31,8 +31,8 @@ var BenniesScript = (function()
 			[
 				['-d', '--deck TEXT', 'Name of the deck where bennies to deal are stored'],
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
-				['-p', '--player TEXT', 'Name of the player to deal bennies to'],
-				['-q', '--quantity TEXT', 'Number of bennies to deal to. Must be 0 or higher. 0 will remove all bennies. Defaults to 3.']
+				['-p', '--player TEXT', 'Name or Id (use quotes around id) of the player to reset bennies of'],
+				['-q', '--quantity TEXT', 'Number of bennies to reset to. Must be 0 or higher. 0 will remove all bennies. Defaults to 3.']
 			],
 			handleResetBennies
 		);
@@ -89,7 +89,7 @@ var BenniesScript = (function()
 			return;
 		}
 
-		var player = _getPlayerByName(argv.opts.player);
+		var player = _getPlayerByNameOrId(argv.opts.player);
 		if (!player) {
 			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
 			return;
@@ -168,7 +168,7 @@ var BenniesScript = (function()
 			return;
 		}
 
-		var player = _getPlayerByName(argv.opts.player);
+		var player = _getPlayerByNameOrId(argv.opts.player);
 		if (!player) {
 			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
 			return;
@@ -246,12 +246,20 @@ var BenniesScript = (function()
 		return players;
 	}
 
-	function _getPlayerByName(name)
+	function _getPlayerByNameOrId(name)
 	{
-		var players = findObjs({
-			_type: "player",
-			_displayname: name
-		});
+		var players = null;
+		if (name.startsWith("-")) {
+			players = findObjs({
+	 			_type: "player",
+	 			_id: name
+	 		});
+		} else {
+			players = findObjs({
+	 			_type: "player",
+	 			_displayname: name
+	 		});
+		}
 
 		if (!players) {
 			return null;
