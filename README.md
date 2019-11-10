@@ -156,9 +156,9 @@ Bennies will all appear in the same section :
 
 To reset bennies, you will have to specify each type of benny for each player :
 ```javascript
-!bennies-reset -p Dude -d Bennies --card Classic --quantity 3
-!bennies-reset -p Dude -d Bennies --card Soak --quantity 1
-!bennies-reset -p Dude -d Bennies --card Royal --quantity 0
+!bennies-reset -p Dude -d Bennies -c Classic -q 3
+!bennies-reset -p Dude -d Bennies -c Soak -q 1
+!bennies-reset -p Dude -d Bennies -c Royal -q 0
 ```
 
 ## Advanced usage
