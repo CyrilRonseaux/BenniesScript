@@ -214,7 +214,6 @@ var BenniesScript = (function()
 
 		var bennyCardId = bennyCard.get("_id");
 
-
 		var handAsArray = playerHand.get("currentHand").split(",");
 
 		// First removing all cards (if any) we need to reset
@@ -375,7 +374,9 @@ var BenniesScript = (function()
 
 	return {
 		registerEventHandlers: registerEventHandlers,
-		handleDealBennies: handleDealBennies
+		handleDealBennies: handleDealBennies,
+		handleResetBennies: handleResetBennies,
+		handleShowBennies: handleShowBennies
 	}
 }());
 
