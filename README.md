@@ -1,5 +1,5 @@
 # BenniesScript
-Roll20 script to ease dealing Savage Worlds Bennies to players.
+Roll20 script to ease dealing Savage Worlds Bennies to players. You can also use it to grant Conviction, count Mass Battle tokens, or keep track of Social Conflict Influence.
 
 ## Setup
 You need a Roll20 Pro Subscription to be able to use API Scripts.
@@ -61,7 +61,7 @@ If you don't provide a player name, the command will list all online players and
 ![Player name omitted will list all players](doc-assets/omit-player-name.png)
 
 ### Dealing bennies to every player
-Sometimes you want to reward each player with a benny, for example when a Joker was drawn. Use "all" for the player name.
+Sometimes you want to reward each player (but not GMs) with a benny, for example when a Joker was drawn. Use "all" for the player name.
 ```javascript
 !bennies-deal --player all --deck NameOfTheBennyDeck
 ```
@@ -101,7 +101,20 @@ If player has Luck or similar Edge, you can set the quantity :
 
 ![Reseting bennies](doc-assets/benny-reset-4.png)
 
-## Setting up macros
+## Advanced usage
+### Using player IDs
+Instead of giving bennies to a player by giving her name, you can use her ID:
+```javascript
+!bennies-deal -p "-L8nrK8CDBqUbROE_YvW" -d NameOfTheBennyDeck
+```
+Note that you must use quotes around the id, to avoid the leading hyphen of Roll20 Id to be identified as an option to the command line.
+
+You get the IDs of the players with:
+```javascript
+!bennies-show --ids
+```
+
+### Setting up macros
 
 You can of course create macro so you don't have to type the commands each time :
 
@@ -131,7 +144,7 @@ Put a token of this character somewhere hidden on your game table, and you can r
 ![Token Bar](doc-assets/benny-dealer-in-game.png)
 
 
-## Handling different type of bennies
+### Handling different type of bennies
 If your game is using different types of bennies (like in Deadlands), for example, a Classic benny that can reroll a trait, a Soak benny that can only soak wounds, and a royal benny that can be used for both, you can use a different deck for each type of benny, and change the Deck name in the command.
 ```javascript
 !bennies-deal -p PlayerDisplayName -d Royal
@@ -160,11 +173,3 @@ To reset bennies, you will have to specify each type of benny for each player :
 !bennies-reset -p Dude -d Bennies -c Soak -q 1
 !bennies-reset -p Dude -d Bennies -c Royal -q 0
 ```
-
-## Advanced usage
-### Using player IDs
-Instead of giving bennies to a player by giving her name, you can use her ID:
-```javascript
-!bennies-deal -p "-L8nrK8CDBqUbROE_YvW" -d NameOfTheBennyDeck
-```
-Note that you must use quotes around the id, to avoid the leading hyphen of Roll20 Id to be identified as an option to the command line.

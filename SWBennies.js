@@ -3,10 +3,7 @@ var BenniesScript = (function()
 {
 	'use strict';
 
-// ADD a -k --character option that accept character_id
-// ADD a -i --playerid option that accept a player_id instead of name ?
 // search if possible to fetch "part of" player name instead of equals
-// accept "all" for player name to give to each player.
 
 
 	function registerEventHandlers()
@@ -18,7 +15,7 @@ var BenniesScript = (function()
 			[
 				['-d', '--deck TEXT', 'Name of the deck where bennies to deal are stored.'],
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
-				['-p', '--player TEXT', 'Name or Id (use quotes arount id) of the player to deal bennies to. "all" to give same amount of bennies to each online player.'],
+				['-p', '--player TEXT', 'Name or Id (use quotes arount id) of the player to deal bennies to. "all" to give same amount of bennies to each online player (excluding GMs).'],
 				['-q', '--quantity TEXT', 'Number of bennies to deal to. Must be 1 or higher. Defaults to 1.']
 			],
 			handleDealBennies
@@ -36,6 +33,36 @@ var BenniesScript = (function()
 			],
 			handleResetBennies
 		);
+
+		apicmd.on(
+			'bennies-show',
+			'Show information about players and their bennies.',
+			'--ids', // ' --deck BENNYDECK',
+			[
+				// ['-d', '--deck TEXT', 'Name of the deck where bennies to list are stored'],
+				['-i', '--ids', 'Show player ids']
+			],
+			handleShowBennies
+		);
+
+	}
+
+	function handleShowBennies(argv, msg)
+	{
+		if (!argv || !argv.opts || !argv.opts.ids) {
+			sendChat("api", "/w gm --ids option is mandatory.");
+			return;
+		}
+
+		var online = _getOnlinePlayers();
+		online.forEach(function(player) {
+			var message = "**" + player.get("displayname") + "**";
+			if (argv.opts.ids) {
+					message += " (" + player.get("id") + ").";
+			}
+			_niceChat(player.get("avatar"), message);
+		});
+
 	}
 
 	function handleDealBennies(argv, msg)
@@ -105,7 +132,9 @@ var BenniesScript = (function()
 			online.forEach(function(p) {
 				var i;
 				for (i = 0; i < quantity; i++) {
-					_dealBennyToPlayer(p, benniesDeckId, bennyCardId);
+					if (!playerIsGM(p)) {
+						_dealBennyToPlayer(p, benniesDeckId, bennyCardId);
+					}
 				}
 			});
 	}
