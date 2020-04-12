@@ -99,6 +99,18 @@ If player has Luck or similar Edge, you can set the quantity :
 !bennies-reset -p PlayerDisplayName -d NameOfTheBennyDeck -q 4
 ```
 
+However, if you want to put them into a single macro, some lines in the macro may get lost, and you might want to put everything on a single command. There is a --multi option to deal bennies to all players in a single go. List player names between comma.
+
+```javascript
+!bennies-reset --deck NameOfTheBennyDeck --multi FirstPlayer,SecondPlayer,ThirdPlayer
+```
+
+If one has Luck, add a pipe | and then the quantity:
+```javascript
+!bennies-reset -d Bennies -m Gronyon,Kayla|4,Voronwë
+```
+Would deal 3 bennies to Gronyon and Voronwë, and 4 to Kayla.
+
 ![Reseting bennies](doc-assets/benny-reset-4.png)
 
 ## Advanced usage

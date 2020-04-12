@@ -24,12 +24,13 @@ var BenniesScript = (function()
 		apicmd.on(
 			'bennies-reset',
 			'Reset a players bennie back to a given session start stock.',
-			'[--quantity QTY --card BENNYNAME] --deck BENNYDECK --player PLAYERNAME',
+			'--deck BENNYDECK [--player PLAYERNAME --quantity QTY --card BENNYNAME] [--player2 PLAYERNAME] ',
 			[
 				['-d', '--deck TEXT', 'Name of the deck where bennies to deal are stored'],
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
 				['-p', '--player TEXT', 'Name or Id (use quotes around id) of the player to reset bennies of'],
-				['-q', '--quantity TEXT', 'Number of bennies to reset to. Must be 0 or higher. 0 will remove all bennies. Defaults to 3.']
+				['-q', '--quantity TEXT', 'Number of bennies to reset to. Must be 0 or higher. 0 will remove all bennies. Defaults to 3.'],
+				['-m', '--multi TEXT', 'a list of players with corresponding quantities. Expected format: PLAYER1|QUANTITY1,PLAYER2|QUANTITY2,PLAYER3|QUANTITY3']
 			],
 			handleResetBennies
 		);
@@ -37,7 +38,7 @@ var BenniesScript = (function()
 		apicmd.on(
 			'bennies-show',
 			'Show information about players and their bennies.',
-			'--ids', // ' --deck BENNYDECK',
+			'--ids ', // ' --deck BENNYDECK',
 			[
 				// ['-d', '--deck TEXT', 'Name of the deck where bennies to list are stored'],
 				['-i', '--ids', 'Show player ids']
@@ -58,9 +59,9 @@ var BenniesScript = (function()
 		online.forEach(function(player) {
 			var message = "**" + player.get("displayname") + "**";
 			if (argv.opts.ids) {
-					message += " (" + player.get("id") + ").";
+					message += "<br/>" + player.get("id");
 			}
-			_niceChat(player.get("avatar"), message);
+			_niceChat(null, message);
 		});
 
 	}
@@ -192,50 +193,75 @@ var BenniesScript = (function()
 
 	function handleResetBennies(argv, msg)
 	{
-		if (!argv || !argv.opts || !argv.opts.deck || !argv.opts.player) {
-			sendChat("api", "/w gm --deck and --player options are mandatory.");
+		if (!argv || !argv.opts || !argv.opts.deck) {
+			sendChat("api", "/w gm --deck option is mandatory.");
 			return;
 		}
 
-		var player = _getPlayerByNameOrId(argv.opts.player);
+		if (!argv.opts.player && !argv.opts.multi) {
+			sendChat("api", "/w gm --player or --multi option is missing. --player to reset a single player, --multi to reset multiple players.");
+			return;
+		}
+
+		var deck = argv.opts.deck;
+		var card = argv.opts.card;
+
+		if (argv.opts.player) {
+			_resetBenniesForPlayer(argv.opts.player, deck, card, argv.opts.quantity);
+			return;
+		}
+
+		var players = argv.opts.multi.split(",");
+		var data = [];
+		players.forEach(function(playerdata) {
+			data.push( _parsePlayerQuantity(playerdata) );
+		});
+
+		data.forEach(function(playerdata) {
+			_resetBenniesForPlayer(playerdata.player, deck, card, playerdata.quantity);
+		});
+	}
+
+	function _resetBenniesForPlayer(argplayer, argdeck, argcard, argquantity) {
+		var player = _getPlayerByNameOrId(argplayer);
 		if (!player) {
-			sendChat("api", "/w gm Player does not exist " + argv.opts.player + ".");
+			sendChat("api", "/w gm Player does not exist " + argplayer + ".");
 			return;
 		}
 
 		var playerHand = _getPlayerHand(player.get("id"));
 		if (!playerHand) {
-			sendChat("api", "/w gm Player " + argv.opts.player + " seems to be offline.");
+			sendChat("api", "/w gm Player " + argplayer + " seems to be offline.");
 			return;
 		}
 
-		var benniesDeck = _getDeckByName(argv.opts.deck);
+		var benniesDeck = _getDeckByName(argdeck);
 		if (!benniesDeck) {
-			sendChat("api", "/w gm Deck not found " + argv.opts.deck);
+			sendChat("api", "/w gm Deck not found " + argdeck);
 			return;
 		}
 
 		var bennyCard = null;
-		if (argv.opts.card) {
-			bennyCard = _getCardInDeck(argv.opts.card, benniesDeck.get('id'));
+		if (argcard) {
+			bennyCard = _getCardInDeck(argcard, benniesDeck.get('id'));
 			if (!bennyCard) {
-				sendChat("api", "/w gm Card " + argv.opts.card + " not found in deck " + argv.opts.deck);
+				sendChat("api", "/w gm Card " + argcard + " not found in deck " + argdeck);
 				return;
 			}
 		} else {
 			bennyCard = _getFirstCardOfDeck(benniesDeck.get('id'));
 			if (!bennyCard) {
-				sendChat("api", "/w gm No card in deck " + argv.opts.deck);
+				sendChat("api", "/w gm No card in deck " + argdeck);
 				return;
 			}
 		}
 
 		var quantity = 3;
 		// if quantity not provided, assume reseting back to 3 bennies
-		if (argv.opts.quantity) {
-			var q = parseInt(argv.opts.quantity);
+		if (argquantity) {
+			var q = parseInt(argquantity);
 			if (Number.isNaN(q)) {
-				sendChat("api", "/w gm Quantity " + argv.opts.quantity + " is not a valid number.");
+				sendChat("api", "/w gm Quantity " + argquantity + " is not a valid number.");
 				return;
 			}
 			quantity = q;
@@ -361,12 +387,25 @@ var BenniesScript = (function()
 		return hands[0]; // players shall never have more than one hand.
 	}
 
-	function _niceChat(bennyImage, message)
+	function _parsePlayerQuantity(playerquantity) {
+		var data = {
+				player: null,
+				quantity: 3
+		};
+		var fragments = playerquantity.split("|");
+		data.player = fragments[0];
+		if (fragments.length==2) {
+			data.quantity = fragments[1];
+		}
+		return data;
+	}
+
+	function _niceChat(image, message)
 	{
 		var html = '/desc '
 		+ '<div style="display: block; margin-left: -7px; margin-right: 2px; padding: 2px 0px;">'
 		+ '  <div style="position: relative; border: 1px solid #000; border-radius: 5px; background-color:ForestGreen; background-image: linear-gradient(rgba(255, 255, 255, .3), rgba(255, 255, 255, 0)); margin-right: -2px; padding: 2px 5px 5px 50px;">'
-		+ '    <div style="position: absolute; top: -10px; left: 5px; height: 40px; width: 40px;"><img src="' + bennyImage + '" style="height: 40px; width: 40px;" /></div>'
+		+ (image? '    <div style="position: absolute; top: -10px; left: 5px; height: 40px; width: 40px;"><img src="' + image + '" style="height: 40px; width: 40px;" /></div>' : '')
 		+ '    <div style="font-family: Candal; font-size: 13px; line-height: 15px; color: #FFF; font-weight: normal; text-align: center;">' + message + '</div>'
 		+ '  </div>'
 		+ '</div>';
