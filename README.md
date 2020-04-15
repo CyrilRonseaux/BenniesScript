@@ -194,9 +194,11 @@ Deal special bennies using their deck name:
 ```
 
 Bennies will appear in separate sections in the player's hand:
+
 ![One deck per type of bennies](doc-assets/multi-bennies-as-multi-deck.png)
 
 Alternatively, you can create each benny type as a different card in a single deck:
+
 ![One card per type of bennies](doc-assets/multi-benny.png)
 
 Deal special bennies using the --card option:
@@ -205,6 +207,7 @@ Deal special bennies using the --card option:
 ```
 
 Bennies appear in the same section in the player's hand:
+
 ![Multi-bennies in Hand](doc-assets/single-benny-section.png)
 
 ### Conviction
@@ -228,16 +231,21 @@ For tokens gained by the opposition (e.g. in Social Conflicts), deal them to you
 ```
 
 For token lost (e.g. in a Mass Battle), no API yet, simply have the player drop tokens from his hand to the board.
+
 ![Drop tokens](doc-assets/drop-tokens.png)
 
 When it's over, no need for API, simply recall all tokens back to the deck:
-![Recall menu](doc-assets/recall-menu.png) ![Recall all tokens](doc-assets/recall-tokens.png)
+
+![Recall menu](doc-assets/recall-menu.png)
+![Recall all tokens](doc-assets/recall-tokens.png)
 
 If you want different art for each type of token, follow exemple in the [Special Bennies](#special-bennies) section.
 
 ### Quickly create custom benny art
 You are in a hurry? You need some Art for Bennies and Tokens very fast?
 * [TokenStamp](http://rolladvantage.com/tokenstamp/) let you quickly get a colored circle
-* Drag an image ![Benny with Image](doc-assets/benny-image.png)
-* Or add a text box ![Red Benny with TokenStamp](doc-assets/red-benny.png)
-* Use UTF-8 characters ([utf8icons](https://www.utf8icons.com/) or [emojipedia](https://emojipedia.org/) in that text box for quick images ![Yellow Star](doc-assets/yellow-star.png)
+* Drag an image
+* Or add a text box
+* Use UTF-8 characters ([utf8icons](https://www.utf8icons.com/) or [emojipedia](https://emojipedia.org/)) in that text box for quick images
+
+![Benny with Image](doc-assets/benny-image.png) ![Red Benny with TokenStamp](doc-assets/red-benny.png) ![Yellow Star](doc-assets/yellow-star.png)
