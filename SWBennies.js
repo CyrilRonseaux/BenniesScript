@@ -3,6 +3,10 @@ var BenniesScript = (function()
 {
 	'use strict';
 
+// TODO
+// Macro to take away one benny from a player (mass battles token loss)
+// Deal token to the GM without using his name (using "GM" as the name/id)
+// Move token from player to gm for
 // search if possible to fetch "part of" player name instead of equals
 
 
@@ -30,7 +34,7 @@ var BenniesScript = (function()
 				['-c', '--card TEXT', 'Name of the card to deal as benny from the deck. If not given, will pick the first card in the deck. Perfect for bennies deck with a single card.'],
 				['-p', '--player TEXT', 'Name or Id (use quotes around id) of the player to reset bennies of'],
 				['-q', '--quantity TEXT', 'Number of bennies to reset to. Must be 0 or higher. 0 will remove all bennies. Defaults to 3.'],
-				['-m', '--multi TEXT', 'a list of players with corresponding quantities. Expected format: PLAYER1|QUANTITY1,PLAYER2|QUANTITY2,PLAYER3|QUANTITY3']
+				['-m', '--multi TEXT', 'a list of players with corresponding optional quantities and benny card. Expected format: PLAYER1,PLAYER2|QUANTITY2,PLAYER3|QUANTITY3|BENNY3']
 			],
 			handleResetBennies
 		);
@@ -46,6 +50,7 @@ var BenniesScript = (function()
 			handleShowBennies
 		);
 
+		log("-=> Savage Worlds Bennies Script started.");
 	}
 
 	function handleShowBennies(argv, msg)
@@ -55,7 +60,7 @@ var BenniesScript = (function()
 			return;
 		}
 
-		var online = _getOnlinePlayers();
+		var online = _getAllPlayers();
 		online.forEach(function(player) {
 			var message = "**" + player.get("displayname") + "**";
 			if (argv.opts.ids) {
@@ -218,7 +223,7 @@ var BenniesScript = (function()
 		});
 
 		data.forEach(function(playerdata) {
-			_resetBenniesForPlayer(playerdata.player, deck, card, playerdata.quantity);
+			_resetBenniesForPlayer(playerdata.player, deck, playerdata.card, playerdata.quantity);
 		});
 	}
 
@@ -295,6 +300,15 @@ var BenniesScript = (function()
 		var players = findObjs({
 			_type: "player",
 			_online: true
+		});
+
+		return players;
+	}
+
+	function _getAllPlayers()
+	{
+		var players = findObjs({
+			_type: "player"
 		});
 
 		return players;
@@ -390,12 +404,16 @@ var BenniesScript = (function()
 	function _parsePlayerQuantity(playerquantity) {
 		var data = {
 				player: null,
-				quantity: 3
+				quantity: 3,
+				card: null
 		};
 		var fragments = playerquantity.split("|");
 		data.player = fragments[0];
-		if (fragments.length==2) {
+		if (fragments.length>=2) {
 			data.quantity = fragments[1];
+		}
+		if (fragments.length>=3) {
+			data.card = fragments[2];
 		}
 		return data;
 	}

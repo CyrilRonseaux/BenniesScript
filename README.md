@@ -210,6 +210,13 @@ Bennies appear in the same section in the player's hand:
 
 ![Multi-bennies in Hand](doc-assets/single-benny-section.png)
 
+Reset players bennies, including special bennies, in one go, use --multi and specify the benny card name after quantity:
+```javascript
+!bennies-reset -d Bennies -m Pedrick|3|Benny,Linda|3|Benny,Julio|4|Benny,Linda|1|Royal
+```
+
+This will give three bennies to Pedrick and Linda, four to Julio, and one special Royal benny to Linda.
+
 ### Conviction
 To use Conviction Setting Rule, create a "Benny Deck", call it "Conviction".
 ```javascript
